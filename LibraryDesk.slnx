@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="LibraryDesk.App/LibraryDesk.App.csproj" />
+  <Project Path="LibraryDesk.Core/LibraryDesk.Core.csproj" />
+  <Project Path="LibraryDesk.Tests/LibraryDesk.Tests.csproj" />
+</Solution>
