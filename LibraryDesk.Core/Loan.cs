@@ -1,5 +1,7 @@
 namespace LibraryDesk.Core;
 
+using LibraryDesk.Core.Domain;
+
 public class Loan
 {
     public Loan(int id, Reader reader)
