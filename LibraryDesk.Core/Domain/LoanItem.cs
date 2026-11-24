@@ -35,4 +35,6 @@ public sealed record LoanItem
     public DateOnly CreatedDate { get; }
 
     public DateOnly DueDate { get; }
+
+    public bool IsReturned { get; init; }
 }
