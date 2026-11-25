@@ -8,7 +8,7 @@ public sealed class DocumentReportPrinter
     private readonly TextWriter _output;
 
     /// <summary>
-    /// Створює об'єкт для виведення звіту.
+    /// Initializes a new instance of the <see cref="DocumentReportPrinter"/> class.
     /// </summary>
     /// <param name="output">Потік для виведення тексту.</param>
     public DocumentReportPrinter(TextWriter output)
