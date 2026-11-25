@@ -1,15 +1,30 @@
 namespace LibraryDesk.Core.Legacy;
 
-public class ArchivedLoan : LegacyLoan
+/// <summary>
+/// Представляє архівну копію формуляра.
+/// </summary>
+public sealed class ArchivedLoan
 {
-    public ArchivedLoan(int id)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArchivedLoan"/> class.
+    /// </summary>
+    /// <param name="loan">Формуляр для архівування.</param>
+    /// <param name="archivedAt">Дата архівування.</param>
+    public ArchivedLoan(LegacyLoan loan, DateOnly archivedAt)
     {
-        Id = id;
+        ArgumentNullException.ThrowIfNull(loan);
+
+        Loan = loan;
+        ArchivedAt = archivedAt;
     }
 
-    public override void AddItem(LegacyLoanItem item)
-    {
-        throw new NotSupportedException(
-            "Архівний формуляр не можна змінювати.");
-    }
+    /// <summary>
+    /// Gets the archived loan.
+    /// </summary>
+    public LegacyLoan Loan { get; }
+
+    /// <summary>
+    /// Gets the archive date.
+    /// </summary>
+    public DateOnly ArchivedAt { get; }
 }

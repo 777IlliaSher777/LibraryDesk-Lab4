@@ -1,95 +1,43 @@
 namespace LibraryDesk.Core.Legacy;
 
-using System.Globalization;
-using System.Text;
 using System.Text.Json;
+using LibraryDesk.Core.Abstractions;
 
-public class FileLoanStore : ILoanStore
+/// <summary>
+/// Забезпечує збереження формулярів у файлах.
+/// </summary>
+public sealed class FileLoanStore : ILegacyLoanRepository
 {
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
     };
 
-    private readonly Dictionary<int, LegacyLoan> _loans = new();
-
-    public void Add(LegacyLoan loan)
-    {
-        ArgumentNullException.ThrowIfNull(loan);
-
-        if (!_loans.TryAdd(loan.Id, loan))
-        {
-            throw new InvalidOperationException(
-                "Формуляр із таким номером уже існує.");
-        }
-    }
-
-    public LegacyLoan? GetById(int id)
-    {
-        _loans.TryGetValue(id, out LegacyLoan? loan);
-        return loan;
-    }
-
-    public void SaveToFile(LegacyLoan loan, string path)
+    /// <summary>
+    /// Зберігає звичайний формуляр у файл.
+    /// </summary>
+    /// <param name="loan">Формуляр для збереження.</param>
+    /// <param name="path">Шлях до файлу.</param>
+    public void Save(LegacyLoan loan, string path)
     {
         ArgumentNullException.ThrowIfNull(loan);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
 
         string json = JsonSerializer.Serialize(loan, _jsonOptions);
-
         File.WriteAllText(path, json);
     }
 
-    public void SendEmail(string recipient, string body)
+    /// <summary>
+    /// Зберігає архівний формуляр у файл.
+    /// </summary>
+    /// <param name="archivedLoan">Архівний формуляр.</param>
+    /// <param name="path">Шлях до файлу.</param>
+    public void SaveArchive(ArchivedLoan archivedLoan, string path)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(recipient);
-        ArgumentNullException.ThrowIfNull(body);
+        ArgumentNullException.ThrowIfNull(archivedLoan);
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
 
-        Console.WriteLine(
-            string.Concat("Повідомлення для ", recipient, ": ", body));
-    }
-
-    public string ExportCsv()
-    {
-        StringBuilder text = new();
-
-        text.AppendLine("id;total;status");
-
-        foreach (LegacyLoan loan in _loans.Values)
-        {
-            text.Append(loan.Id.ToString(CultureInfo.InvariantCulture));
-            text.Append(';');
-            text.Append(loan.Total.ToString(CultureInfo.InvariantCulture));
-            text.Append(';');
-            text.AppendLine(
-                loan.Status.ToString(CultureInfo.InvariantCulture));
-        }
-
-        return text.ToString();
-    }
-
-    public void Backup(string folder)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(folder);
-
-        Directory.CreateDirectory(folder);
-
-        string path = Path.Combine(folder, "loans-backup.json");
-
-        string json = JsonSerializer.Serialize(_loans.Values, _jsonOptions);
-
+        string json = JsonSerializer.Serialize(archivedLoan, _jsonOptions);
         File.WriteAllText(path, json);
-    }
-
-    public void PrintInvoice(LegacyLoan loan)
-    {
-        ArgumentNullException.ThrowIfNull(loan);
-
-        Console.WriteLine(
-            string.Concat(
-                "Формуляр №",
-                loan.Id.ToString(CultureInfo.InvariantCulture),
-                ". Сума: ",
-                loan.Total.ToString(CultureInfo.InvariantCulture)));
     }
 }

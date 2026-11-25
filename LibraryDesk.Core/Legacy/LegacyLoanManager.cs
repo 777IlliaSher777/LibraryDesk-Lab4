@@ -44,9 +44,9 @@ public class LegacyLoanManager
         loan.Total = total;
         loan.Status = 1;
 
-        _store.SaveToFile(loan, "loans.json");
+        _store.Save(loan, "loans.json");
 
-        _mailer.Send(
+        _mailer.Notify(
             loan.Email,
             string.Concat("Формуляр ", loan.Id),
             total.ToString(CultureInfo.InvariantCulture));
@@ -85,13 +85,8 @@ public class LegacyLoanManager
     {
         ArgumentNullException.ThrowIfNull(loan);
 
-        LegacyLoan archived = new ArchivedLoan(loan.Id);
+        ArchivedLoan archived = new(loan, DateOnly.FromDateTime(DateTime.Now));
 
-        foreach (LegacyLoanItem item in loan.Items)
-        {
-            archived.AddItem(item);
-        }
-
-        _store.SaveToFile(archived, "archive.json");
+        _store.SaveArchive(archived, "archive.json");
     }
 }
